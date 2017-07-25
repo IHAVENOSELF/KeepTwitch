@@ -12,13 +12,14 @@ import webview
 import tkinter.filedialog
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from pathlib import *
 
 root = Tk()
 root.resizable(False, False)
 
 class TwitchRecorder:
-    sbar = Label(root, text="Waiting...", bd=1, relief=SUNKEN)
+    sbar = Label(root, text="Starting...", bd=1, relief=SUNKEN)
     sbar.pack(side=BOTTOM, fill=X)
 
     def countdown(self, text, t):  # in seconds
@@ -31,7 +32,11 @@ class TwitchRecorder:
 
     def __init__(self):
 
-        self.root_path = tkinter.filedialog.askdirectory(title="Choose Save Folder")
+        tkinter.messagebox.showinfo("Before Start", "Choose a save folder and authorize with Twitch")
+        self.root_path = os.path.normpath(tkinter.filedialog.askdirectory(title="Choose Save Folder"))
+        self.sbar.config(text="Save Folder Set")
+
+        #set_save_folder_text()
 
         # global configuration
         self.client_id = "jzkbprff40iqj646a697cyrvl0zt2m6" # don't change this
@@ -66,11 +71,11 @@ class TwitchRecorder:
             webview.create_window("Authenticate", "https://api.twitch.tv/kraken/oauth2/authorize/?response_type=token&client_id=pwkzresl8kj2rdj6g7bvxl9ys1wly3j&redirect_uri=https%3A%2F%2Fstreamlink.github.io%2Ftwitch_oauth.html&scope=user_read+user_subscriptions")
 
         def change_root_path():
-            self.root_path = tkinter.filedialog.askdirectory(title="Choose Folder", parent=root)
+            self.root_path = os.path.normpath(tkinter.filedialog.askdirectory(title="Choose Folder", parent=root))
             print(self.root_path)
             e2.config(state=NORMAL)
             e2.delete(0, END)
-            e2.insert(0, self.root_path)
+            e2.insert(0, (str(self.root_path)))
             e2.config(state="readonly")
 
 
@@ -123,6 +128,10 @@ class TwitchRecorder:
 
         e2 = Entry(fourFrame)
         e2.pack()
+        e2.config(state=NORMAL)
+        e2.delete(0, END)
+        e2.insert(0, self.root_path)
+        e2.config(state="readonly")
 
         threeFrame = Frame(root)
         threeFrame.pack(side=BOTTOM)
@@ -223,12 +232,13 @@ class TwitchRecorder:
                         self.sbar.config(text=e)
                 else:
                     self.sbar.config(text="Skip fixing. File not found.")
-
                 self.sbar.config(text="Fixing is done. Going back to checking..")
+                self.run()
 
     def run(self):
         # path to recorded stream
         self.recorded_path = os.path.join(self.root_path, "recorded", self.username)
+        print(self.recorded_path)
 
         # path to finished video, errors removed
         self.processed_path = os.path.join(self.root_path, "processed", self.username)
