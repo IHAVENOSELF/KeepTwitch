@@ -31,6 +31,7 @@ class TwitchRecorder:
 
     def __init__(self):
 
+        self.root_path = tkinter.filedialog.askdirectory(title="Choose Save Folder")
 
         # global configuration
         self.client_id = "jzkbprff40iqj646a697cyrvl0zt2m6" # don't change this
@@ -173,11 +174,10 @@ class TwitchRecorder:
             else:
                 status = 0
         except requests.exceptions.RequestException as e:
-            if e.response:
-                if e.response.reason == 'Not Found' or e.response.reason == 'Unprocessable Entity':
-                        status = 2
-                        self.sbar.config(text="Invalid username or typo.")
-                        return
+            if e.response.reason == 'Not Found' or e.response.reason == 'Unprocessable Entity':
+                    status = 2
+                    self.sbar.config(text="Invalid username or typo.")
+                    return
 
         print(status)
 
