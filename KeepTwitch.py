@@ -13,17 +13,21 @@ import signal
 import webview
 import tkinter.filedialog
 from tkinter import *
+from ttkthemes import themed_tk as tk
 from tkinter import ttk
 from configparser import ConfigParser as config
 from tkinter import messagebox
 from pathlib import *
 
-root = Tk()
-s = ttk.Style()
-
-
-# root.geometry("300x120")
+# root = Tk()
+root = tk.ThemedTk()
+# s = ttk.Style()
+# s = tk.ThemedTk()
+root.set_theme("arc")
+root.configure(background="#F5F6F7")
+root.geometry("400x150")
 root.resizable(False, False)
+
 try:
     file = open("config.ini", "x+")
 except FileExistsError:
@@ -33,10 +37,11 @@ except FileExistsError:
 
 
 class TwitchRecorder:
-    sbar = Label(root, text="Starting...", bd=1, relief=SUNKEN)
+    sbar = ttk.Label(root, text="Starting...", relief=SUNKEN, anchor=CENTER)
     sbar.pack(side=BOTTOM, fill=X)
 
     def __init__(self):
+
 
         # self.file = open("config.ini", "w")
         self.conf = config(allow_no_value=True)
@@ -164,25 +169,27 @@ class TwitchRecorder:
 
             #os.kill(self.pid, signal.CTRL_C_EVENT)
 
+        root.protocol("WM_DELETE_WINDOW", exitprog)
 
         qualities = ["Best", "High", "Medium", "Low", "Mobile", "Audio"]
 
-        oneFrame = Frame(root)
-        oneFrame.pack()
-        l1 = Label(oneFrame, text="Streamer Username")
+        oneFrame = ttk.Frame(root)
+        oneFrame.pack(fill=X, padx=(10, 10), pady=(4, 2))
+
+        l1 = ttk.Label(oneFrame, text="Streamer Username")
         #l1.grid(row=0,column=0, sticky="e")
         l1.pack(side="left")
 
-        self.e1 = Entry(oneFrame)
+        self.e1 = ttk.Entry(oneFrame)
         #self.e1.grid(row=0, column=1)
-        self.e1.pack(side="right")
+        self.e1.pack(side="right", anchor=E)
 
-        twoFrame = Frame(root)
-        twoFrame.pack()
+        twoFrame = ttk.Frame(root)
+        twoFrame.pack(fill=X, padx=(10, 10), pady=(2, 2))
 
-        l2 = Label(twoFrame, text="Quality")
+        l2 = ttk.Label(twoFrame, text="Quality")
         #l2.grid(row=2, column=0, sticky="e")
-        l2.pack(side=LEFT)
+        l2.pack(side=LEFT, anchor=W)
 
         dd1 = ttk.Combobox(twoFrame, values=qualities, state="readonly")
         dd1.current(self.conf.get("settings", "quality"))
@@ -190,26 +197,26 @@ class TwitchRecorder:
         #dd1.grid(row=2, column=1)
         dd1.pack(side=RIGHT)
 
-        fourFrame = Frame(root)
-        fourFrame.pack(side=TOP)
+        fourFrame = ttk.Frame(root)
+        fourFrame.pack(side=TOP, fill=X, padx=(10, 10), pady=(2, 2))
 
-        l3 = Label(fourFrame, text="Save Folder")
-        l3.pack(side=LEFT)
+        l3 = ttk.Label(fourFrame, text="Save Folder")
+        l3.pack(side=LEFT, anchor=W)
 
-        b3 = Button(fourFrame, text="Change", command=change_root_path)
+        b3 =ttk.Button(fourFrame, text="Change", command=change_root_path)
         b3.pack(side=LEFT)
 
-        e2 = Entry(fourFrame)
-        e2.pack()
+        e2 = ttk.Entry(fourFrame)
+        e2.pack(anchor=E)
         e2.config(state=NORMAL)
         e2.delete(0, END)
         e2.insert(0, self.root_path)
         e2.config(state="readonly")
 
-        self.threeFrame = Frame(root)
-        self.threeFrame.pack(side=BOTTOM)
+        self.threeFrame = ttk.Frame(root)
+        self.threeFrame.pack(side=BOTTOM, padx=(10, 10), pady=(2, 2))
 
-        b2 = Button(self.threeFrame, text="Authenticate", command=authorize)
+        b2 =ttk.Button(self.threeFrame, text="Authenticate", command=authorize)
         #b2.grid(row=3, column=0)
         b2.pack(side=LEFT)
         if self.oauth_token is not "":
@@ -225,10 +232,10 @@ class TwitchRecorder:
             else:
                 self.sbar.config(text="Auth token expired. Click Authenticate")
 
-        b4 = Button(self.threeFrame, text="Exit", command=exitprog)
+        b4 =ttk.Button(self.threeFrame, text="Exit", command=exitprog)
         b4.pack(side=RIGHT)
 
-        b1 = Button(self.threeFrame, text="Start", command=set_params)
+        b1 =ttk.Button(self.threeFrame, text="Start", command=set_params)
         #b1.grid(row=3, column=1)
         b1.pack(side=LEFT)
 
@@ -354,7 +361,7 @@ class TwitchRecorder:
                 pid = sp.pid
                 print(pid)
 
-                b5 = Button(self.threeFrame, text="Stop", command=stopsub)
+                b5 =ttk.Button(self.threeFrame, text="Stop", command=stopsub)
                 b5.pack(side=RIGHT)
                 sp.wait()
                 #self.t2.__init__(self)
