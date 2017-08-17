@@ -10,6 +10,10 @@ from configparser import ConfigParser as config
 from tkinter import *
 from tkinter import ttk
 import requests
+from multiprocessing import Queue
+import queue
+from idna import idnadata
+from idna import *
 import webview
 from ttkthemes import themed_tk as tk
 
@@ -330,9 +334,15 @@ class TwitchRecorder:
                 # sp = subprocess.Popen(
                 #     ["streamlink", "--twitch-oauth-token", self.oauth_token, "twitch.tv/" + self.username, self.quality,
                 #      "-o", recorded_filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+
+                startupinfo = None
+                if sys.platform == 'win32':
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
                 sp = subprocess.Popen(
                     ["streamlink", "--twitch-oauth-token", self.oauth_token, "twitch.tv/" + self.username, self.quality,
-                     "-o", recorded_filename], stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+                     "-o", recorded_filename], stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP, startupinfo=startupinfo)
 
                 pid = sp.pid
                 print(pid)
